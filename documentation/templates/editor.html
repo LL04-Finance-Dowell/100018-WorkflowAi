@@ -35,9 +35,14 @@ Create Document
 {{ document.template|json_script:"template" }}
 {{ document.doc_viewer|json_script:"doc_viewer" }}
 {{ document.created_by|json_script:"created_by" }}
+<<<<<<< HEAD
 {{ request.session.user_name|json_script:"curr_user" }}
 {{ document.company.id|json_script:"company_id" }}
 {{ document.user_email|json_script:"curr_user_email" }}
+=======
+{{ request.user.user_name|json_script:"curr_user" }}
+{{ document.company.id|json_script:"company_id" }}
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 
 {% if document.auth_user_list %}
     {{ document.auth_user_list|json_script:"auth_user_list" }}
@@ -46,7 +51,11 @@ Create Document
 
 
 <div style="display:none">
+<<<<<<< HEAD
     <p id="current-user">{{ document.user_email }}</p>
+=======
+    <p id="current-user">{{ request.session.user_name }}</p>
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
     <ul id="user-list">
     {% for user in document.auth_user_list %}
         <li>{{ user }}</li>
@@ -360,7 +369,11 @@ currentP.parentNode.insertBefore(newPageHolder, nextP);
                 <div class = "row">
                     <div class = "col-md-12">
                         <div class="button-container">
+<<<<<<< HEAD
                             <div id="edP-btn" class="drag-btn" draggable="true"><p class="btn-text">Format Text</p><i class="far fa-align-justify"></i></div>
+=======
+                            <div id="edP-btn" class="drag-btn" draggable="true"><p class="btn-text">Editable P</p><i class="far fa-align-justify"></i></div>
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
                             <div id="txt-btn" class="drag-btn" draggable="true"><p class="btn-text">Text</p><i class="fas fa-align-left"></i></div>
                             <div id="img-btn" class="drag-btn" draggable="true"><p class="btn-text">Image</p><i class="far fa-image"></i></div>
                             <div id="table-btn" class="drag-btn" draggable="true"><p class="btn-text">Table</p><i class="fas fa-table"></i></div>

@@ -32,6 +32,7 @@ Workflow{% endblock %}
 
             <div class="boxed-md3 boxed-padded">
                 <div class="text-center"><span class="h3">Workflows</span></div>
+<<<<<<< HEAD
                 <!--{% if request.session.company_id %}-->
                 <!--    <a id="add-new-dt" class="btn btn-dark" style="color:#fff;" data-toggle="modal" data-target="#addWorkFlowModal">Add New</a>-->
                 <!--{% endif %}-->
@@ -41,6 +42,13 @@ Workflow{% endblock %}
 
 
 
+=======
+                {% if request.session.company_id %}
+                    <a id="add-new-dt" class="btn btn-dark" style="color:#fff;" data-toggle="modal" data-target="#addWorkFlowModal">Add New</a>
+                {% endif %}
+
+
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
                     <table id="flowList" class="table table-striped" style="width:100%;">
                         <thead>
                             <tr>
@@ -60,6 +68,7 @@ Workflow{% endblock %}
                               <td>{{ forloop.counter }} </td>
                               <td>{{ dt.workflow_title|title }}</td>
                               <td>
+<<<<<<< HEAD
 
                                    {% if dt.int_wf_string %}
                                    <ol>
@@ -76,6 +85,17 @@ Workflow{% endblock %}
                                            <li>{{internal_name}}</li>
                                         </ol>
 
+=======
+                                    {% if dt.int_wf_string %}
+                                        
+                                        {% for t in dt.int_wf_string  %}
+                                       ({{ forloop.counter }})  {{ t.1|truncatechars:6 }},
+                                            {% endfor %}
+                                    {% else %}
+                                        
+                                        {% with internal_name="No Internal Workflow" %}     
+{{internal_name}}
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 
 {% endwith %}
                                     {% endif %}
@@ -83,6 +103,7 @@ Workflow{% endblock %}
 
                               <td>
                                     {% if dt.ext_wf_string %}
+<<<<<<< HEAD
 
 <ol>
                                       {% for m in  dt.ext_wf_string  %}
@@ -100,6 +121,15 @@ Workflow{% endblock %}
 
 {% endwith %}
 
+=======
+                                      
+                                         {% for m in  dt.ext_wf_string  %}
+                                       ({{ forloop.counter }})  {{ m.1|truncatechars:6 }},
+                                            {% endfor %}
+
+                                    {% else %}
+                                        No external workflow
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
                                     {% endif %}
                               </td>
 
@@ -127,13 +157,21 @@ Workflow{% endblock %}
 
                                 </div>
 
+<<<<<<< HEAD
                                 {% if request.session.company_id  %}
+=======
+                                {% if request.session.company_id == "Admin" %}
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
                                     <a class="btn btn-outline-secondary btn-sm up-wf">Update</a>
                                 {% endif %}
 
                               </td>
                               <td>
+<<<<<<< HEAD
                                 {% if request.session.company_id %}
+=======
+                                {% if request.session.company_id == "Admin"  %}
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
                                     <a class="btn btn-outline-danger btn-sm rm-wf">Remove</a>
                                 {% endif %}
                               </td>

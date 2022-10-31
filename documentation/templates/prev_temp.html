@@ -37,6 +37,7 @@ Previous Document{% endblock %}
                         <tbody>
                             {% if template_list %}
                                 {% for temp_file in template_list %}
+<<<<<<< HEAD
                                     <tr>
                                         <td scope="row">{{ forloop.counter }}</td>
                                         <td><a href="{% url 'documentation:template-editor' temp_file.template_id %}">{{ temp_file.template_name }}</a></td>
@@ -46,6 +47,17 @@ Previous Document{% endblock %}
 
                                     </tr>
                                 {% endfor %}
+=======
+                            <tr>
+                                <td scope="row">{{ forloop.counter }}</td>
+                                <td <a href="{% url 'documentation:template-editor' temp_file.template_id %}">{{ temp_file.template_name }}</a></td>
+                                <td>{{temp_file.workflow_id}}</td>
+                                <td>{{temp_file.created_by}}</td>
+
+
+                            </tr>
+                            {% endfor %}
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
                         </tbody>
 
                     </table>

@@ -26,6 +26,18 @@ REGISTRATION_ARGS = ["login","bangalore","login","registration","registration","
 def redirect_to_login():
     return redirect("https://100014.pythonanywhere.com/register?redirect_url=https://100084.pythonanywhere.com")
 
+from .dowellconnection import dowellconnection
+from .mongo_db_connection import get_all_wf_list, save_wf, get_wf_list, get_user_list, get_template_list, save_template, get_template_object, update_template, save_document
+from .mongo_db_connection import get_document_object, update_document, get_wf_object
+from functools import wraps
+
+
+from .forms import CreateTemplateForm, CreateDocumentForm
+
+
+SESSION_ARGS = ["login","bangalore","login","login","login","6752828281","ABCDE"]
+REGISTRATION_ARGS = ["login","bangalore","login","registration","registration","10004545","ABCDE"]
+
 
 @csrf_exempt
 def main(request):
@@ -51,9 +63,15 @@ def main(request):
             print("LoggedIn as : ", usrdic["data"][0])
             return redirect('documentation:home')   #   HttpResponse("hello")
         else:
+<<<<<<< HEAD
             return redirect_to_login()   #   return redirect("https://100014.pythonanywhere.com/?code=100084")
     else:
         return redirect_to_login()
+=======
+            return redirect("https://100014.pythonanywhere.com/register?redirect_url=100084.pythonanywhere.com")   #   return redirect("https://100014.pythonanywhere.com/?code=100084")
+    else:
+        return redirect("https://100014.pythonanywhere.com/register?redirect_url=100084.pythonanywhere.com")
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 
 
 def logout(request):
@@ -69,16 +87,25 @@ def logout(request):
 
 
 def home(request, *args, **kwargs):
+<<<<<<< HEAD
     if request.session.get("user_name"):
         return render(request, 'home.html', {"obj":request.session.items()})    #HttpResponse(context)
     else:
         return redirect_to_login()
+=======
+    #return render(request, 'home.html', {"obj":request.session.items()})
+    if request.session.get("user_name"):
+        return render(request, 'home.html', {"obj":request.session.items()})    #HttpResponse(context)
+    else:
+        return redirect("https://100014.pythonanywhere.com/?code=100084")
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 
 
 class EmailWorkflow(View):
 
     def get(self, request, *args, **kwargs):
         wf_list = get_wf_list(request.session['company_id'])
+<<<<<<< HEAD
         wfs_to_display = []
         for wf in wf_list:
             wf["id"] = wf["_id"]
@@ -86,6 +113,12 @@ class EmailWorkflow(View):
             if wf.get('workflow_title') and (wf.get('workflow_title') != 'execute_wf') :
                 wfs_to_display.append(wf)
         return render(request, 'manage_workflow.html', context={'wf_list': wfs_to_display, 'workflow':['internal', 'external']})
+=======
+        for wf in wf_list:
+            wf["id"] = wf["_id"]
+        #user_list = get_user_list(company_id=request.session["company_id"])
+        return render(request, 'manage_workflow.html', context={'wf_list': wf_list, 'workflow':['internal', 'external']})
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 
 
     def post(self, request, *args, **kwargs):
@@ -122,15 +155,23 @@ class Template(View):
     def get(self, request, *args, **kwargs):
         if request.session['user_name']:
             template_list = []
+<<<<<<< HEAD
             template_list = [(0, '--Template Name(None)--')]
             try:
                 for i in get_template_list(request.session['company_id']):
+=======
+            try:
+                for i in get_template_list():
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
                     template_list.append((i['_id'], i['template_name']))
             except:
                 pass
 
             wf_list = []
+<<<<<<< HEAD
             wf_list = [(0, '--Workflow (None)--')]
+=======
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
             try:
                 for i in get_wf_list(request.session['company_id']):
                     wf_list.append((i['_id'], i['workflow_title']))
@@ -141,12 +182,21 @@ class Template(View):
             CreateTemplateForm.base_fields['workflow'] = forms.ChoiceField(choices=wf_list)
             CreateTemplateForm.base_fields['copy_template'] = forms.ChoiceField(choices=template_list, required=False)
 
+<<<<<<< HEAD
             CreateTemplateForm.base_fields['workflow'].widget.attrs.update({'class': 'form-control selectpicker','data-style':"btn-custom"})
             CreateTemplateForm.base_fields['copy_template'].widget.attrs.update({'class': 'form-control selectpicker','data-style':"btn-custom"})
             form = CreateTemplateForm()
             return render(request, 'create_template.html', {'form': form})
         else:
             return redirect_to_login()
+=======
+            CreateTemplateForm.base_fields['workflow'].widget.attrs.update({'class': 'form-control selectpicker'})
+            CreateTemplateForm.base_fields['copy_template'].widget.attrs.update({'class': 'form-control selectpicker'})
+            form = CreateTemplateForm()
+            return render(request, 'create_template.html', {'form': form})
+        else:
+            return redirect("https://100014.pythonanywhere.com/?code=100084")
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 
 
     def post(self, request, *args, **kwargs):
@@ -158,11 +208,16 @@ class Template(View):
         if form.is_valid():
             if 'name' in form.cleaned_data.keys() and 'workflow' in form.cleaned_data.keys():
                 if form.cleaned_data['copy_template'] :
+<<<<<<< HEAD
                     try:
                         old_template = get_template_object(form.cleaned_data['copy_template'])
                         data = old_template['content']
                     except:
                         pass
+=======
+                    old_template = get_template_object(form.cleaned_data['copy_template'])
+                    data = old_template['content']
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 
                 resObj = json.loads(save_template(form.cleaned_data['name'], form.cleaned_data['workflow'], data, created_by, company_id))
                 print('This is a response from Report server', resObj)
@@ -177,8 +232,11 @@ class TemplateEditor(View):
         if request.session['user_name']:
             template_obj = get_template_object(template_id=kwargs["template_id"])
             workflow_obj = get_wf_object(template_obj['workflow_id'])
+<<<<<<< HEAD
             user = get_user_info_by_username(request.session['user_name'])
 
+=======
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
             user_list = []
             for step in workflow_obj['int_wf_string']:
                 user_list.append(step[1])
@@ -190,18 +248,30 @@ class TemplateEditor(View):
                 'id': template_obj['_id'],
                 'name': template_obj['template_name'],
                 'created_by': template_obj['created_by'],
+<<<<<<< HEAD
                 'auth_user_list': [str(user['Email']), *user_list],
+=======
+                'auth_user_list': [str(template_obj['created_by']), *user_list],
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
                 'file': template_obj['content'],
                 'verify': False,
                 'template': True,
                 'doc_viewer': False,
+<<<<<<< HEAD
                 'company_id': template_obj['company_id'],
                 'user_email': user['Email'],
+=======
+                'company_id': template_obj['company_id']
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
             }
 
             return render(request, 'editor.html', context={'document': ctx})
         else:
+<<<<<<< HEAD
             return redirect_to_login()
+=======
+            return redirect("https://100014.pythonanywhere.com/logout")
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 
 
     def post(self, request,*args, **kwargs):
@@ -221,10 +291,15 @@ class TemplateEditor(View):
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 class CreateDocument(View):
     def get(self, request, *args, **kwargs):
         if request.session['user_name']:
             form = CreateDocumentForm()
+<<<<<<< HEAD
             template_list = [(0, '__Template Name__')]
             for i in get_template_list(company_id=request.session["company_id"]):
                 template_list.append((i['_id'], i['template_name']))
@@ -235,11 +310,22 @@ class CreateDocument(View):
             return render(request, 'create_document.html', {'form': form})
         else:
             return redirect_to_login()
+=======
+            template_list = [(0, '__select__')]
+            for i in get_template_list(company_id=request.session["company_id"]):
+                template_list.append((i['_id'], i['template_name']))
+            CreateDocumentForm.base_fields['copy_template'] = forms.ChoiceField(choices=template_list)
+            form = CreateDocumentForm()
+            return render(request, 'create_template.html', {'form': form})
+        else:
+            return redirect("https://100014.pythonanywhere.com/?code=100084")
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 
 
     def post(self, request, *args, **kwargs):
         data = ''
         form = CreateDocumentForm(request.POST)
+<<<<<<< HEAD
         if request.session['user_name']:
             company_id = request.session["company_id"]
             created_by = request.session['user_name']
@@ -260,6 +346,25 @@ class UserAuthenticate(View):
     redirect_url = ''
     def get(self, request, *args, **kwargs):
         self.redirect_url = reverse('document:verify', kwargs={'document_id': kwargs['document_id']})
+=======
+        company_id = request.session["company_id"]
+        created_by = request.session['user_name']
+        if form.is_valid():
+            template_id = form.cleaned_data['copy_template']
+            name = form.cleaned_data['name']
+            resObj = json.loads(save_document(name, template_id, data, created_by, company_id))
+            print('This is a response from Report server', resObj)
+            if resObj['isSuccess'] :
+                return redirect('documentation:document-editor', document_id=resObj['inserted_id'])
+            return JsonResponse({"status": 400, "message": "Unable to save on database"})
+        return JsonResponse({"status": 420, "message": "invalid form"})
+
+
+class UserAuthenticate(View):
+    def get(self, request, *args, **kwargs):
+        if kwargs['verify']:
+            self.redirect_url = reverse('document:verify', document_id=kwargs['document_id'])
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
         return render(request, 'link_based_authenticate.html')
 
     def post(self, request):
@@ -280,6 +385,10 @@ class UserAuthenticate(View):
         return redirect(self.redirect_url)
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 class DocumentEditor(View):
     verify = False
     template = False
@@ -288,8 +397,12 @@ class DocumentEditor(View):
     def get(self, request, *args, **kwargs):
         if request.session['user_name']:
             document_obj = get_document_object(document_id=kwargs["document_id"])
+<<<<<<< HEAD
             user = get_user_info_by_username(request.session['user_name'])
             print("Document object in Editor", document_obj['int_wf_step'])
+=======
+            print("Document object in Editor", document_obj)
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
             ctx = {
                 'id': document_obj['_id'],
                 'name': document_obj['document_name'],
@@ -299,18 +412,27 @@ class DocumentEditor(View):
                 'verify': self.verify,
                 'template': self.template,
                 'doc_viewer': self.doc_viewer,
+<<<<<<< HEAD
                 'company_id': document_obj['company_id'],
                 'user_email': user['Email'],
+=======
+                'company_id': document_obj['company_id']
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
             }
             return render(request, 'editor.html', context={'document': ctx})
         else:
             if self.verify :
+<<<<<<< HEAD
                 return redirect("documentation:user-authentication", document_id=kwargs["document_id"])
+=======
+                return redirect("documentation:user-authentication", document_id=kwargs["document_id"], verify=True)
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
             return redirect("https://100014.pythonanywhere.com/logout")
 
 
     def post(self, request,*args, **kwargs):
         if request.session['user_name']:
+<<<<<<< HEAD
             body_unicode = request.body.decode('utf-8')
             body = json.loads(body_unicode)
             print("Document Post:", body['file_id'], str(body['content']))
@@ -328,6 +450,17 @@ class DocumentEditor(View):
                 return JsonResponse({"status": 200, "url": reverse('documentation:document-editor', kwargs={'document_id':document_id'})  #redirect('documentation:document-editor', template_id=resObj['inserted_id'])
 
             '''
+=======
+            print("Document Post:", request.POST)
+            _id = request.POST["file_id"]
+            data = request.POST["content"]
+            resObj = json.loads(update_document(_id, {'content': data}))
+            print('This is a response from Report server', resObj)
+            if resObj['isSuccess'] :
+                return JsonResponse({"status": 200, "message": "Document updated!"})#redirect('documentation:document-editor', template_id=resObj['inserted_id'])
+            else:
+                return JsonResponse({"status": 400, "message": "Unable to save on database"})
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
         else:
             return JsonResponse({"status": 420, "message": "invalid data"})
 

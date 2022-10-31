@@ -19,7 +19,11 @@ urlpatterns = [
     path('template/<str:template_id>', TemplateEditor.as_view(), name='template-editor'),
     path('document/<str:document_id>', DocumentEditor.as_view(), name='document-editor'),
     path('add-to-wf', documentWorkFlowAddView, name="add-to-wf"),
+<<<<<<< HEAD
     path('sign-document/<str:document_id>/<str:uuid_hash>', DocumentVerificationView.as_view(), name="verify-document"),
+=======
+    path('sign-document/<str:document_id>', DocumentVerificationView.as_view(), name="verify-document"),
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
     path('reject-document-request', documentRejectionRequest, name="reject-document"),
 
     path('view-document/<str:document_id>', DocumentViewer.as_view(), name='view-document'),

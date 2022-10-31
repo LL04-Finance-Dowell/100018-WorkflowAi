@@ -126,6 +126,7 @@ Create Template{% endblock %}
 /*}*/
 
 /*    }*/
+<<<<<<< HEAD
 .btn-custom{
   background-color: #1FAA59;
   color: #fdec00
@@ -152,6 +153,8 @@ label{
   border: 2px solid #1FAA59;
    /*color:#fdec00;*/
 }
+=======
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 </style>
 
 <div class="home-content-container">
@@ -168,12 +171,20 @@ label{
 	<div class="row justify-content-center mt-5">
 
     	<article class="col-md-8">
+<<<<<<< HEAD
       <div class="boxed-md boxed-padded" style="padding:60px;">
         <div class="text-center"><span class="h3">Create Document</span></div>
         	<form method="post" enctype="multipart/form-data">{% csrf_token %}
 		    {{ form|crispy }}
 		    <hr style="margin-top:35px;">
 		    <input type="submit" class="btn btn-custom-2" value="Go to Editor">
+=======
+      <div class="boxed-md boxed-padded">
+        <div class="text-center"><span class="h3">Create Document</span></div>
+        	<form method="post" enctype="multipart/form-data">{% csrf_token %}
+		    {{ form|crispy }}
+		    <input type="submit" class="btn btn-outline-success " value="Go to Editor">
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 	    </form>
       </div>
     </article>

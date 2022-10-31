@@ -4,17 +4,25 @@ from datetime import datetime
 from .dowellconnection import dowellconnection
 
 
+<<<<<<< HEAD
 QR_ID_CONNECTION_LIST = [ "Documents", "bangalore", "Documentation", "qridtokens", "qridtokens", "10008484", "ABCDE"]
 
 USER_CONNECTION_LIST = ["login","bangalore","login","registration","registration","10004545","ABCDE"]
 WF_CONNECTION_LIST = ["Documents","bangalore","Documentation","WorkflowReports","workflowreports","33689044433","ABCDE"]
 TEMPLATE_CONNECTION_LIST = ["Documents","bangalore","Documentation","TemplateReports","templatereports","22689044433","ABCDE"]
 DOCUMENT_CONNECTION_LIST = ["Documents","bangalore","Documentation","DocumentReports","documentreports","11689044433","ABCDE"]
+=======
+USER_CONNECTION_LIST = ["login","bangalore","login","registration","registration","10004545","ABCDE"]
+WF_CONNECTION_LIST = ["Documents","bangalore","Documentation","WorkflowReports","workflowreports","33689044433","ABCDE"]
+TEMPLATE_CONNECTION_LIST = ["Documents","bangalore","Documentation","TemplateReports","templatereports","22689044433","ABCDE"]
+DOCUMENT_CONNECTION_LIST = ["Documents","bangalore","Documentation","WorkflowReports","workflowreports","33689044433","ABCDE"]
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 
 SESSION_ARGS = ["login","bangalore","login","login","login","6752828281","ABCDE"]
 REGISTRATION_ARGS = ["login","bangalore","login","registration","registration","10004545","ABCDE"]
 
 
+<<<<<<< HEAD
 QR_ID_CONNECTION_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
@@ -24,6 +32,8 @@ QR_ID_CONNECTION_DICT = {
     "function_ID": "ABCDE",
 }
 
+=======
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 WF_CONNECTION_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
@@ -45,9 +55,15 @@ TEMPLATE_CONNECTION_DICT = {
 DOCUMENT_CONNECTION_DICT = {
     "cluster": "Documents",
     "database": "Documentation",
+<<<<<<< HEAD
     "collection": "DocumentReports",
     "document": "documentreports",
     "team_member_ID": "11689044433",
+=======
+    "collection": "WorkflowReports",
+    "document": "workflowreports",
+    "team_member_ID": "33689044433",
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
     "function_ID": "ABCDE"
 }
 
@@ -92,6 +108,7 @@ def get_user_info_by_username(username):
 
 
 
+<<<<<<< HEAD
 def save_uuid_hash(uuid_hash, user_email, document_id):
     url = "http://100002.pythonanywhere.com/"
 
@@ -155,6 +172,8 @@ def update_uuid_object(uuid_hash):
 #   __________________________________________________________
 
 
+=======
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
 
 def save_wf(wf_name, int_wf_string, ext_wf_string, user, company_id):
     url = "http://100002.pythonanywhere.com/"
@@ -324,7 +343,11 @@ def save_document(name, template_id, data, created_by, company_id):
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
+<<<<<<< HEAD
     print("SAVED Document", response.text)
+=======
+    print("SAVED TEMPLATE", response.text)
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
     return response.text
 
 
@@ -332,13 +355,26 @@ def save_document(name, template_id, data, created_by, company_id):
 def update_document(document_id, data):
     url = "http://100002.pythonanywhere.com/"
 
+<<<<<<< HEAD
+=======
+    event_id = get_event_id()
+
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
     payload = json.dumps({
         **DOCUMENT_CONNECTION_DICT,
         "command": "update",
         "field": {
             '_id': document_id,
         },
+<<<<<<< HEAD
         "update_field": { **data },
+=======
+        "update_field": {
+            'eventId': event_id,
+            **data,
+        },
+
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
         "platform": "bangalore"
     })
 
@@ -347,7 +383,11 @@ def update_document(document_id, data):
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
+<<<<<<< HEAD
     print("Updated Document", response.text)
+=======
+    print("SAVED TEMPLATE", response.text)
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
     return response.text
 
 

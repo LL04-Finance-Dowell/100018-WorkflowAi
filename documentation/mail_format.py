@@ -1,6 +1,10 @@
 
 
+<<<<<<< HEAD
 def formated_mail(email, document_link):
+=======
+def formated_mail(email, link):
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
     return """<link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css' rel='stylesheet' id='bootstrap-css'>
     <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
@@ -145,7 +149,11 @@ def formated_mail(email, document_link):
                             <p style='margin: 0 74px; font-size: 16px; color: #000;' >
                                 The document sent by Dowell Research is awaiting your signature.
                                 To review and sign the document, please click the button below or
+<<<<<<< HEAD
                                 <a href={document_link}>
+=======
+                                <a href={link}>
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
                                 Click Here</a> <br><br>
                                 </p>
                         </td>
@@ -157,7 +165,11 @@ def formated_mail(email, document_link):
                                     <td bgcolor='#ffffff' align='center' style='padding: 20px 30px 60px 30px;'>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
+<<<<<<< HEAD
                                                 <td align='center' style='border-radius: 3px;' bgcolor='#21633d'><a href={document_link} target='_blank' style='font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #fdec00; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #21633d; display: inline-block;'>View Document</a></td>
+=======
+                                                <td align='center' style='border-radius: 3px;' bgcolor='#21633d'><a href={link} target='_blank' style='font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #fdec00; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #21633d; display: inline-block;'>View Document</a></td>
+>>>>>>> cb178417b7f102c7144a630b7f129917a7187c02
                                             </tr>
                                         </table>
                                     </td>
