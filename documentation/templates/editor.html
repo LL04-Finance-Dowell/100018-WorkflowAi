@@ -1,0 +1,673 @@
+{% extends 'base_no_nav.html' %}
+
+{% block title %}
+Create Document
+{% endblock %}
+{% load static %}
+{% block addcss %}
+
+<!-- Latest compiled and minified CSS -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+{% endblock %}
+{% block content %}
+<link href="{% static 'css/custom.css'  %}" rel='stylesheet' type='text/css' >
+<link href="{% static 'css/chat.css'  %}" rel='stylesheet' type='text/css' >
+
+
+
+
+<script src="https://unpkg.com/pdf-lib"></script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.js"></script>
+
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.js"></script>
+
+
+
+
+{{ document.id|json_script:"documentID" }}
+{{ document.verify|json_script:"verify" }}
+{{ document.file|json_script:"file-data" }}
+{{ document.name|json_script:"documentName" }}
+{{ document.template|json_script:"template" }}
+{{ document.doc_viewer|json_script:"doc_viewer" }}
+{{ document.created_by|json_script:"created_by" }}
+{{ request.session.user_name|json_script:"curr_user" }}
+{{ document.company.id|json_script:"company_id" }}
+{{ document.user_email|json_script:"curr_user_email" }}
+
+{% if document.auth_user_list %}
+    {{ document.auth_user_list|json_script:"auth_user_list" }}
+{% endif %}
+
+
+
+<div style="display:none">
+    <p id="current-user">{{ document.user_email }}</p>
+    <ul id="user-list">
+    {% for user in document.auth_user_list %}
+        <li>{{ user }}</li>
+    {% endfor %}
+    </ul>
+</div>
+
+{% if document.template %}{% endif %}
+
+
+
+<div id="editor-container">
+    {% if document.doc_viewer %}
+            <style>
+                .pdf-btn {
+                    position: fixed;
+                    right: 2vw;
+                    bottom: 2vw;
+                    z-index: 100;
+                    width: 7em;
+                    border-radius: 0.5em;
+                    box-shadow: 0px 0px 10px #3fc0d6;
+                    background-color: #c2f6ff;
+                    color: #ea4a88;
+                    border: none;
+                }
+            </style>
+                <button id="convert-pdf" class="pdf-btn">Download PDF</button>
+                <!--script type="module" src="{% static 'js/editor/pdf_converter.js' %}"></script-->
+    {% endif %}
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
+
+    <!--End of Text FOrmatting Form-->
+     <!--Modal classes-->
+    {% include 'modal_classes.html' %}
+    {% include 'text_format.html' %}
+
+
+
+<div id="showAlert">
+
+        </div>
+    <div class = "row" {% if document.doc_viewer %}style="display: block !important"{% else %} {% endif %}>
+
+        <div id="page-container" {% if not document.doc_viewer %}class="doc-container col-md-9"{% endif %}>
+            <!--Beginning of Text Formatting Form-->
+            <div class="page ">
+
+                <div class="pdf-file docedit-page" style = "width:100%; height: 100%; border:1px dashed green; " class="page-identity doc-content grid"></div>
+{% if  document.template %}
+           <button class="btn btn-primary btn-sm"style = "margin-top:1%;" id= "addPageHereId" onclick="addPageHere3(event)"> Add Page</button>
+  <button class="btn btn-primary btn-sm"  style = "margin-top:1%;" id= "deletePageHereId" onclick="deletePageHere3(event)"> Delete Page</button>
+   {% endif %}
+            </div>
+
+        </div>
+
+        {% if document.doc_viewer %}
+            <iframe id="pdf-viewer" style="display: none; width: 100%; height: 100vh;"></iframe>
+        {% endif %}
+
+
+        {% if not document.doc_viewer %}
+            <div class="menu-container col-md-3">
+{% if  document.template %}
+
+       <div > <label style="display:inline;"><u>Template Name</u> :</label><h4 style="display:inline;"> {{document.name}}</h4></div>
+       <hr>
+       <script>
+           let myPages = document.getElementsByClassName("docedit-page");
+           let currentPage = myPages[0];
+           let nextPage = myPages[0];
+           let previousPage =  myPages[0];
+          $( document ).ready(function() {
+
+for(var i = 0; i < myPages.length; i++){
+    console.log("myPages[i]")
+	console.log(myPages[i]);
+	myPages[i].addEventListener('contextmenu', (event) => {
+  console.log("event.target");
+  console.log(event.target);
+  currentPage = event.target;
+  nextPage = event.target.parentElement.nextElementSibling;
+  previousPage = event.target.parentElement.previousElementSibling;
+  console.log("current Page");
+  console.log(currentPage);
+//   addPageHere(currentPage);
+  addPageHere(currentPage, nextPage, previousPage);
+});
+}
+    console.log( "ready! document" );
+});
+       function addPage(){
+        //   <button class="btn btn-dark btn-sm" id= "addPageHereId" onclick="addPageHere3(event)"> Add</button>
+//   <button class="btn btn-dark btn-sm" id= "deletePageHereId" onclick="deletePageHere3(event)"> Delete</button>
+           const pageContainer = document.getElementById('page-container');
+           console.log(pageContainer);
+
+           const newPageHolder = document.createElement('div');
+           newPageHolder.className = "page";
+
+
+
+
+
+
+           const addP = document.createElement('button');
+           const delP = document.createElement('button');
+           addP.className = "btn btn-primary btn-sm";
+           delP.className = "btn btn-primary btn-sm";
+        //   addP.onclick = addPageHere3(event);
+           addP.addEventListener('click', function(event){addPageHere3(event);});
+           delP.addEventListener('click', function(event){deletePageHere3(event);});
+           addP.textContent = 'Add Page';
+           delP.textContent = 'Delete Page';
+           const newPage = document.createElement('div');
+           newPage.className = "pdf-file docedit-page";//page-identity doc-content grid";
+           newPage.style.width = "100%";
+           newPage.style.height = "100%";
+           newPage.style.border = "1px dashed green";
+
+
+
+
+
+
+
+
+           	newPage.addEventListener('contextmenu', (event) => {
+  console.log("event.target");
+  console.log(event.target);
+  console.log("event.target.parent");
+  console.log(event.target.parentElement);
+  console.log("event.target.parentElement.nextElementSibling");
+  console.log(event.target.parentElement.nextElementSibling);
+  console.log("event.target.parentElement.nextSibling");
+  console.log(event.target.parentElement.nextSibling);
+  console.log("event.target.parentElement.previousSibling");
+  console.log(event.target.parentElement.previousSibling);
+  console.log("event.target.parentElement.previousElementSibling ");
+  console.log(event.target.parentElement.previousElementSibling);
+
+    currentPage = event.target;
+    // currentPage = event.target;
+  nextPage = event.target.parentElement.nextElementSibling;
+  previousPage = event.target.parentElement.previousElementSibling;
+    addPageHere(currentPage, nextPage, previousPage);
+  console.log("current Page");
+  console.log(currentPage);
+//   addPageHere(currentPage);
+});
+
+
+           newPageHolder.append(newPage);
+           newPageHolder.append(addP);
+           newPageHolder.append(delP);
+        //   pageContainer.append(newPageHolder);
+// currentP.parentNode.insertBefore(newPageHolder, nextP);
+
+            // newPageHolder.append(addP);
+        //   newPageHolder.append(newPage);
+           pageContainer.append(newPageHolder);
+       }
+       function addPageHere(currentPage, nextSibling, previousSibling){
+console.log("Add page here");
+var cX = event.clientX;
+  var sX = event.screenX;
+  var cY = event.clientY;
+  var sY = event.screenY;
+  var coords1 = "client - X: " + cX + ", Y coords: " + cY;
+  var coords2 = "screen - X: " + sX + ", Y coords: " + sY;
+  console.log("Add page here coords1"+coords1);
+ console.log("Add page here coords2"+coords2);
+ console.log("Nextpage sibling");
+ console.log(nextSibling);
+ console.log("previous sibling");
+ console.log(previousSibling);
+//  addPageHere(currentPage, nextPage, previousPage)
+ console.log("currentPage sibling");
+ console.log(currentPage);
+ console.log("nextPage sibling");
+ console.log(nextPage);
+ console.log("previousPage sibling");
+ console.log(previousPage);
+//   document.getElementById("demo").innerHTML = coords1 + "<br>" + coords2;
+        //   const pageContainer = document.getElementById('page-container');
+        //   console.log(pageContainer);
+
+        //   const newPageHolder = document.createElement('div');
+        //   newPageHolder.className = "page";
+
+        //   const newPage = document.createElement('div');
+        //   newPage.className = "pdf-file docedit-page";//page-identity doc-content grid";
+        //   newPage.style.width = "100%";
+        //   newPage.style.height = "100%";
+        //   newPage.style.border = "1px dashed green";
+
+        //   newPageHolder.append(newPage);
+        //   pageContainer.append(newPageHolder);
+       }
+       function addPageHere2(){
+            console.log("currentPage sibling addPageHere2");
+ console.log(currentPage);
+ console.log("nextPage sibling addPageHere2");
+ console.log(nextPage);
+ console.log("previousPage sibling addPageHere2");
+ console.log(previousPage);
+  const newPageHolder = document.createElement('div');
+           newPageHolder.className = "page";
+
+           const newPage = document.createElement('div');
+           newPage.className = "pdf-file docedit-page";//page-identity doc-content grid";
+           newPage.style.width = "100%";
+           newPage.style.height = "100%";
+           newPage.style.border = "1px dashed green";
+           	newPage.addEventListener('contextmenu', (event) => {
+  console.log("event.target");
+  console.log(event.target);
+  console.log("event.target.parent");
+  console.log(event.target.parentElement);
+  console.log("event.target.parentElement.nextElementSibling");
+  console.log(event.target.parentElement.nextElementSibling);
+  console.log("event.target.parentElement.nextSibling");
+  console.log(event.target.parentElement.nextSibling);
+  console.log("event.target.parentElement.previousSibling");
+  console.log(event.target.parentElement.previousSibling);
+  console.log("event.target.parentElement.previousElementSibling ");
+  console.log(event.target.parentElement.previousElementSibling);
+
+    currentPage = event.target;
+    // currentPage = event.target;
+  nextPage = event.target.parentElement.nextElementSibling;
+  previousPage = event.target.parentElement.previousElementSibling;
+    addPageHere(currentPage, nextPage, previousPage);
+  console.log("current Page");
+  console.log(currentPage);
+//   addPageHere(currentPage);
+});
+
+           newPageHolder.append(newPage);
+           console.log("currentPage sibling after the new ekenebt addPageHere2");
+ console.log(currentPage);
+ console.log("currentPage.parentNodesibling after the new ekenebt addPageHere2");
+ console.log(currentPage.parentNode.parentNode);
+ console.log("nextPage sibling  after the new ekenebt addPageHere2");
+ console.log(nextPage);
+ console.log("previousPage sibling  after the new ekenebt addPageHere2");
+ console.log(previousPage);
+  currentPage.parentNode.parentNode.insertBefore(newPageHolder, nextPage);
+       }
+       function deletePageHere2(){
+           currentPage.parentNode.remove();
+       }
+       function addPageHere3(e){
+           console.log("event on function 3");
+           console.log(e.target.parentNode);
+           currentP = e.target.parentNode;
+           previousP = e.target.parentNode.previousElementSibling;
+           nextP = e.target.parentNode.nextElementSibling
+           console.log("event previousP on function 3");
+           console.log(previousP);
+           console.log("event  nextP on function 3");
+           console.log(nextP);
+           const newPageHolder = document.createElement('div');
+           newPageHolder.className = "page";
+           const addP = document.createElement('button');
+           const delP = document.createElement('button');
+           addP.className = "btn btn-primary btn-sm";
+           addP.style.marginTop= "1%";
+           delP.style.marginTop= "1%";
+           delP.style.marginLeft= "1%";
+           delP.className = "btn btn-primary btn-sm";
+        //   addP.onclick = addPageHere3(event);
+           addP.addEventListener('click', function(event){addPageHere3(event);});
+           delP.addEventListener('click', function(event){deletePageHere3(event);});
+           addP.textContent = 'Add Page';
+           delP.textContent = 'Delete Page';
+           const newPage = document.createElement('div');
+           newPage.className = "pdf-file docedit-page";//page-identity doc-content grid";
+           newPage.style.width = "100%";
+           newPage.style.height = "100%";
+           newPage.style.border = "1px dashed green";
+        //  newPageHolder.append(addP);
+        //   newPageHolder.append(delP);
+           newPageHolder.append(newPage);
+           newPageHolder.append(addP);
+           newPageHolder.append(delP);
+        //   pageContainer.append(newPageHolder);
+currentP.parentNode.insertBefore(newPageHolder, nextP);
+
+       }
+       function deletePageHere3(e){
+           currentP = e.target.parentNode;
+           currentP.remove();
+       }
+       </script>
+
+       <!--<button class="btn btn-dark" onclick="addPage()"> Add page</button>-->
+
+
+         <!--<hr>-->
+         {% else %}
+       <div > <label style="display:inline;"><u>Document Name</u> :</label><h4 style="display:inline;"> {{document.name}}</h4></div>
+       <hr>
+    {% endif %}
+
+            {% if document.template %}
+
+                <h6>Fields</h6>
+                <div class = "row">
+                    <div class = "col-md-12">
+                        <div class="button-container">
+                            <div id="edP-btn" class="drag-btn" draggable="true"><p class="btn-text">Format Text</p><i class="far fa-align-justify"></i></div>
+                            <div id="txt-btn" class="drag-btn" draggable="true"><p class="btn-text">Text</p><i class="fas fa-align-left"></i></div>
+                            <div id="img-btn" class="drag-btn" draggable="true"><p class="btn-text">Image</p><i class="far fa-image"></i></div>
+                            <div id="table-btn" class="drag-btn" draggable="true"><p class="btn-text">Table</p><i class="fas fa-table"></i></div>
+                            <div id="signature-btn" class="drag-btn" draggable="true"><p class="btn-text">Signature</p><i class="fas fa-signature"></i></div>
+                            <div id="date-btn" class="drag-btn" draggable="true"><p class="btn-text">Date</p><i class="fas fa-calendar-day"></i></div>
+                        </div>
+                        <div class = "button-container2">
+                            <div id="dropdown-btn" class="drag-btn mb-3"  draggable="true"><p class="btn-text">Dropdown</p><i class="far fa-list-alt"></i></div>
+                            <div id="delete-btnn" class="drag-btn mb-3" draggable="false"><p class="btn-text">Delete</p><i class="fas fa-trash"></i></div>
+
+                        </div>
+                        <!--<div class="button-container">-->
+                            <!--<div class= "row">-->
+                        <!--    <div id="signature-btn" class="drag-btn" draggable="true"><p class="btn-text">Signature</p><i class="fas fa-signature"></i></div>-->
+                        <!--    <div id="date-btn" class="drag-btn" draggable="true"><p class="btn-text">Date</p><i class="fas fa-calendar-day"></i></div>-->
+                        <!--    <div id="dropdown-btn" class="drag-btn" style ="display:none;" draggable="true"><p class="btn-text">Dropdown</p><i class="far fa-list-alt"></i></div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                    </div>
+                {% endif %}
+                    <div class = "col-md-12">{% csrf_token %}
+                        {% if document.verify %}
+
+                            <form  class="mt-3" id="signature-form"  method="post">{% csrf_token %}
+                                <input type="hidden" name="document_id" value="{{  document.id }}" />
+                                <input type="hidden" name="auth_users" id="auth_users" value="{{ document.auth_user_list }}"/>
+                                <input type="hidden" name="documentData" id="documentData"/>
+                                <!--<button onclick="signSubmit()" id="save_sig" class="btn btn-outline-info">Save Signature</button>-->
+                            <input style="display: none" type="submit" class="btn btn-outline-success mt-3" id="Signed"/>
+
+                                <button id="save_sig" class="btn btn-outline-info">Finalize Document</button>
+
+                            </form>
+                            <button onclick="rejectDocumentForm()" class="btn btn-outline-danger mt-3">Reject Document</button>
+
+                            <!--h3>Sign, Save and submit</h3-->
+
+                            <div id="editor"></div>
+
+
+                        {% elif document.template %}
+                            <button id='save-template-btn' class="btn btn-outline-success mt-3">Save Template</button>
+                            <!--<button id='arrange-template-btn' class="btn btn-outline-success mt-3">Arrange Template</button>-->
+                        {% else %}
+                            <button id="addToWorkFlowButton" class="btn btn-outline-primary mt-3" type="submit">Process Document</button>
+
+                            <button id='save-btn' class="btn btn-outline-success mt-3">Save Document</button>
+
+                            <!--section class="chat-area">
+                                <header>
+                                    <h6 style="padding-top: 20px; padding-bottom: 10px;">Document Comments</h6>
+                                </header>
+                                <div class="chat-box" id="display" style="height: 40vh;
+                                overflow-y: auto; background: #f7f7f7; padding: 5px 5px 5px 5px;"></div>
+                                <div id="form-div">
+                                    <form id="post-form" class="">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="username" id="username" value="{{ request.user.username }}"/>
+                                        <input type="hidden" name="auth_users" id="auth_users" value="{{ document.auth_user_list }}"/>
+                                        <input type="hidden" name="room" id="room" value="{{ document.name }}"/>
+                                        <textarea class="col-md-12" placeholder="Comment on Document" class="form-control" aria-label="With textarea" type="text" name="message" id="message"></textarea>
+                                        <input class="btn btn-outline-info" type="submit" value="Send Message">
+                                    </form>
+                                </div>
+                            </section -->
+
+                        {% endif %}
+                    </div>
+
+     {% if  document.template %}
+                    <div class="col-md-12 column">
+
+  <div class="portlet">
+    <div class="portlet-header">Users Permissions <button style="display:none;" id ="delete_element_portlet" class = "btn-dark"><i class="fas fa-trash" style="color: #000;"></i></button></div>
+    <div class="portlet-content">
+    <select id = "user_portlet_select"  data-dropup-auto="false"  class="selectpicker">
+
+
+</select>
+    </div>
+
+  </div>
+
+
+
+</div>
+       <div class="col-md-12 column">
+
+  <div class="portlet">
+    <div class="portlet-header">Table Elements Perms </div>
+    <div class="portlet-content">
+    <select id = "user_portlet_select_sub"  data-dropup-auto="false"  class="selectpicker">
+
+
+</select>
+    </div>
+
+  </div>
+
+
+
+</div>
+    {% endif %}
+                </div>
+
+        </div>
+        {% endif %}
+    </div>
+<style>
+
+
+
+
+
+
+    </style>
+<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js">-->
+<!--</script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"></script>-->
+<!--<script src="main_tab.js"></script>-->
+</div>
+
+
+
+
+{% endblock %}
+{% block additionalscript %}
+
+<script type="module" src="{% static 'js/editor/text_format.js' %}"></script>
+<script src="{% static 'js/editor/editor_main.js' %}"></script>
+
+<script type="text/javascript">
+    const pdfBtn = document.getElementById("convert-pdf");
+
+    pdfBtn.onclick = (event) => {
+        const fileData = JSON.parse(document.getElementById('file-data').textContent);
+        convert_to_pdf(fileData);
+    }
+
+    async function convert_to_pdf(data){
+        function convertDataURIToBinary(dataURI) {
+            const imgString = dataURI.split("data:image/png;base64,")[1]
+
+            //console.log(imgString)
+
+            //var BASE64_MARKER = ';base64,';
+            //var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+            //var base64 = dataURI.substring(base64Index);
+            var raw = window.atob(imgString);
+            var rawLength = raw.length;
+            var array = new Uint8Array(new ArrayBuffer(rawLength));
+
+            for(i = 0; i < rawLength; i++) {
+                array[i] = raw.charCodeAt(i);
+            }
+
+            return array;
+        }
+
+
+
+        const d = JSON.parse(data);
+        const htmlPDFPageWidth = 720;
+        const htmlPDFPageHeight = 800;
+
+        const pdfDoc = await PDFLib.PDFDocument.create()
+        const timesRomanFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman)
+
+        for(let pg = 0; pg < d.length ; ++pg){
+            console.log("Page", pg)
+            const page = pdfDoc.addPage([900, 1000])
+            const { width, height } = page.getSize()
+
+            for(let i = 0; i < d[pg].length; ++i ){
+                const item = d[pg][i];
+                if(item.type === "EDIT_P"){
+                    try {
+                        console.log(item.data)
+                    }
+                    catch(err){}
+                }
+
+                if(item.type === "TEXT_INPUT" || item.type === "EDIT_P" || item.type === "DATE_INPUT"){
+                    //  console.log(item.top, item.left)
+                    //  console.log("width and Height", width, height)
+                    //  console.log((parseInt(item.top.split('px')[0]) / htmlPDFPageWidth) * width)
+                    //  console.log((parseInt(item.left.split('px')[0]) / htmlPDFPageHeight) * height )
+
+                    page.drawText(item.data, {
+                        x: (parseInt(item.left.split('px')[0]) / htmlPDFPageWidth) * width,
+                        y: height - (parseInt(item.top.split('px')[0]) / htmlPDFPageHeight) * height, //height - 4 * fontSize,
+                        size: 16,
+                        font: timesRomanFont,
+                        color: PDFLib.rgb(0, 0, 0),
+                    })
+                }
+
+                if(item.type === "IMG_INPUT"){
+                    try {
+                        const pngBuffer = convertDataURIToBinary(item.data);
+                        const pngImage = await pdfDoc.embedPng(pngBuffer)
+
+                        page.drawImage(pngImage, {
+                            x: (parseInt(item.left.split('px')[0]) / htmlPDFPageWidth) * width,     //   page.getWidth() / 2 - pngDims.width / 2 + 75,
+                            y: height -((parseInt(item.top.split('px')[0]) / htmlPDFPageHeight) * height + (parseInt(item.height.split('px')[0]) / htmlPDFPageHeight) * height),   //  page.getHeight() / 2 - pngDims.height,
+                            width: (parseInt(item.width.split('px')[0]) / htmlPDFPageWidth) * width,
+                            height: (parseInt(item.height.split('px')[0]) / htmlPDFPageHeight) * height,
+                        });
+
+                    }
+
+                    catch(err) {
+                        console.log(err);
+                    }
+                }
+
+                if(item.type === "TABLE_INPUT"){
+                    try {
+                        console.log(item.data)
+                    }
+                            /*{
+                              "row0column0": {
+                                "cellWidth": "153.833px",
+                                "cellHeight": "88px",
+                                "auth_user": "depp25johnny",
+                                "data": "NOT_SIGNED",
+                                "type": "SIGN"
+                              },
+                              "row0column1": {
+                                "cellWidth": "153.117px",
+                                "cellHeight": "88px",
+                                "auth_user": "depp25johnny",
+                                "data": "wqewqcrew",
+                                "type": "TEXT_INPUT_T"
+                              },
+                              "row0column2": {
+                                "cellWidth": "154.05px",
+                                "cellHeight": "88px",
+                                "data": "BLANK",
+                                "type": "BLANK_CELL",
+                                "auth_user": ""
+                              },
+                              "row1column0": {
+                                "cellWidth": "153.833px",
+                                "cellHeight": "88px",
+                                "data": "BLANK",
+                                "type": "BLANK_CELL",
+                                "auth_user": ""
+                              },
+                              "row1column1": {
+                                "cellWidth": "153.117px",
+                                "cellHeight": "88px",
+                                "data": "BLANK",
+                                "type": "BLANK_CELL",
+                                "auth_user": ""
+                              },
+                              "row1column2": {
+                                "cellWidth": "154.05px",
+                                "cellHeight": "88px",
+                                "data": "BLANK",
+                                "type": "BLANK_CELL",
+                                "auth_user": ""
+                              }
+                            }*/
+
+                    catch(err) {
+                        console.log(err);
+                    }
+                }
+            }
+        }
+
+        const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true });
+        const pdfViewer = document.getElementById('pdf-viewer')
+        pdfViewer.src = pdfDataUri;
+        pdfViewer.style.display = 'block';
+
+    }
+</script>
+
+
+<!-- script type="module" src="https://unpkg.com/pdf-lib/dist/pdf-lib.js"></script -->
+
+
+
+<script>
+  $( function() {
+    $( ".column" ).sortable({
+      connectWith: ".column",
+      handle: ".portlet-header",
+      cancel: ".portlet-toggle",
+      placeholder: "portlet-placeholder ui-corner-all"
+    });
+
+    $( ".portlet" )
+      .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+      .find( ".portlet-header" )
+        .addClass( "ui-widget-header ui-corner-all" )
+        .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+
+    $( ".portlet-toggle" ).on( "click", function() {
+      var icon = $( this );
+      icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
+      icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
+    });
+  } );
+  </script>
+
+{% endblock %}

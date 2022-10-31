@@ -1,0 +1,204 @@
+{% extends 'base7.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+Documents{% endblock %}
+{% block addcss %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css" rel="stylesheet" type='text/css' />
+<link href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css" rel="stylesheet" type='text/css' />
+    <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel= 'stylesheet' type='text/css' />
+{% endblock %}
+{% block content %}
+
+<div class="container" style="max-width: 80%; overflow: auto; background-color: #fff; margin-top:20px;">
+{% if message %}
+    <h3> {{ message }} </h3>
+{% endif%}
+
+<div class="row justify-content-center mt-5">
+    <article class="col-md-12">
+        <div class="boxed-md boxed-padded">
+            <div class="text-center"><span class="h3">Rejected Documents</span></div>
+            <!--<div class = "row">-->
+            <!--<div class = "col-md-4"></div>-->
+
+
+
+
+
+             <div class="tab-pane fade show active" id="docsList"  role="tabpanel" aria-labelledby="all" >
+            <!-- <div class="collapse"  id="category1"> -->
+
+                <table id="docList" class="table table-striped table-bordered" style="width:100%">
+                    <thead>
+                                    <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Message</th>
+              <th>Pending Step</th>
+              <th>Signing Link</th>
+            </tr>
+                    </thead>
+                    <tbody>
+                        {% for document in filtered_list %}
+    <tr>
+      <td scope="row">{{ forloop.counter }}</td>
+      <td>{{ document.document_name|title }}</td>
+      <td>{{ document.reject_message }}</td>
+      <td>
+            {% if document.internal_wf_step %}
+
+                {% if document.internal_wf_step == 'complete' %}
+                    {% if document.external_wf_step %}
+                        {{ document.external_wf_step|title }}
+
+                        {% for step in document.document_type.external_work_flow.steps.all %}
+                            {% if step.name == document.external_wf_step %}
+                                - {{ step.authority | title }}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {{ document.internal_wf_step|title }}
+
+                        {% for step in document.document_type.internal_work_flow.steps.all %}
+                            {% if step.name == document.internal_wf_step %}
+                                - {{ step.authority | title }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% else %}
+                    {{ document.internal_wf_step|title }}
+
+                    {% for step in document.document_type.internal_work_flow.steps.all %}
+                        {% if step.name == document.internal_wf_step %}
+                            - {{ step.authority | title }}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+            {% elif document.external_wf_step %}
+                {{ document.external_wf_step|title }}
+
+                {% for step in document.document_type.external_work_flow.steps.all %}
+                    {% if step.name == document.external_wf_step %}
+                        - {{ step.authority | title }}
+                    {% endif %}
+                {% endfor %}
+
+            {% else %}
+                Not in workflow
+            {% endif %}
+      </td>
+
+
+      <td>
+        {% if document.document_type.internal_work_flow is not None and document.internal_wf_step != 'complete' %}
+
+            {% for step in document.document_type.internal_work_flow.steps.all %}
+                {% if step.name == document.internal_wf_step and step.authority == request.user %}
+                    <a href="{% url 'editor:verify-document' company.id document.id %}">Sign It</a>
+                {% endif %}
+            {% endfor %}
+
+        {% elif document.document_type.external_work_flow is not None and document.external_wf_step != 'complete'%}
+
+            {% for step in document.document_type.external_work_flow.steps.all %}
+                {% if step.name == document.external_wf_step and step.authority == request.user %}
+                    <a href="{% url 'editor:verify-document' company.id document.id %}">Sign It</a>
+                {% endif %}
+            {% endfor %}
+
+        {% else %}
+
+        {% endif %}
+
+      </td>
+    </tr>
+ {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+
+
+
+
+
+
+
+
+        </div>
+</article>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+{% endblock %}
+{% block additionalscript %}
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
+<!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>-->
+    <script src="https://use.fontawesome.com/b4aae4cb0e.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/leafo/sticky-kit/v1.1.2/jquery.sticky-kit.min.js"></script>
+    <!--<script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>-->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+
+    <!--<script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js"></script>-->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
+
+
+
+
+<script type="text/javascript">
+	$(".sidebar").stick_in_parent();
+        $(document).ready(function() {
+
+
+
+    let dynamicDt = [];
+
+    let allDocumentListTable = $('#docList').DataTable( {
+        // fixedHeader: true
+         responsive: {
+    breakpoints: [
+      {name: 'bigdesktop', width: Infinity},
+      {name: 'meddesktop', width: 1480},
+      {name: 'smalldesktop', width: 1280},
+      {name: 'medium', width: 1188},
+      {name: 'tabletl', width: 1024},
+      {name: 'btwtabllandp', width: 848},
+      {name: 'tabletp', width: 768},
+      {name: 'mobilel', width: 480},
+      {name: 'mobilep', width: 320}
+    ]
+  }
+    } );
+        } );
+
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
